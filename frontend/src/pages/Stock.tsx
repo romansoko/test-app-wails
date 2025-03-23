@@ -557,7 +557,7 @@ const Stock: React.FC<StockProps> = ({ darkMode, showNotification }) => {
       id: item.id,
       name: item.name,
       description: item.description || '',
-      quantity: item.quantity || 0
+      quantity: item?.quantity || 0
     });
     setShowAddEditModal(true);
   };
@@ -727,7 +727,7 @@ const Stock: React.FC<StockProps> = ({ darkMode, showNotification }) => {
               <StockItemCard 
                 key={item.id} 
                 darkMode={darkMode}
-                lowStock={item.quantity <= 5}
+                lowStock={item?.quantity <= 5}
               >
                 <StockItemHeader>
                   <div>
@@ -738,9 +738,9 @@ const Stock: React.FC<StockProps> = ({ darkMode, showNotification }) => {
                   </div>
                   <QuantityBadge 
                     darkMode={darkMode}
-                    lowStock={item.quantity <= 5}
+                    lowStock={item?.quantity <= 5}
                   >
-                    {item.quantity} in stock
+                    {item?.quantity || 0} in stock
                   </QuantityBadge>
                 </StockItemHeader>
                 
@@ -815,8 +815,7 @@ const Stock: React.FC<StockProps> = ({ darkMode, showNotification }) => {
                   onChange={handleFormChange}
                   darkMode={darkMode}
                   min="0"
-                  step="1"
-                  required
+                  step="0.01"
                 />
               </FormGroup>
               
