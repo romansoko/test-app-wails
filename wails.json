@@ -16,5 +16,9 @@
     "productVersion": "1.0.0",
     "copyright": "Copyright 2023"
   },
-  "debounceMS": 500
+  "debounceMS": 500,
+  "windows": {
+    "webviewInstallMode": "embed",
+    "webview2InstallMode": "embed"
+  }
 }

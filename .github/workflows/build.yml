@@ -33,7 +33,7 @@ jobs:
         
       - name: Build Wails App
         run: |
-          wails build
+          wails build -webview2 embed -platform windows/amd64
         
       - name: Upload Windows Build
         if: matrix.platform == 'windows-latest'
