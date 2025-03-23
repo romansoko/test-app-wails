@@ -9,6 +9,11 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# Add permissions block to fix release creation
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build:
     strategy:
