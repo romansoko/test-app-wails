@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
+import { IconType } from 'react-icons';
 import { GetStockItems, AddStockItem, UpdateStockItem, DeleteStockItem } from '../../wailsjs/go/main/App';
 import { main } from '../../wailsjs/go/models';
 
@@ -101,6 +103,10 @@ const AddButton = styled.button<{ darkMode: boolean }>`
   
   &:hover {
     background: #2563eb;
+  }
+  
+  svg {
+    font-size: 14px;
   }
 `;
 
@@ -409,26 +415,22 @@ const Stock: React.FC<StockProps> = ({ darkMode, showNotification }) => {
     }
   };
   
-  // Filter items when search term changes
-  useEffect(() => {
-    if (!searchTerm.trim()) {
-      setFilteredItems(stockItems);
-      return;
-    }
-    
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    const filtered = stockItems.filter(item => 
-      item.name.toLowerCase().includes(lowerCaseSearchTerm) || 
-      (item.description && item.description.toLowerCase().includes(lowerCaseSearchTerm))
-    );
-    
-    setFilteredItems(filtered);
-  }, [searchTerm, stockItems]);
-  
-  // Load items on mount
   useEffect(() => {
     loadStockItems();
   }, []);
+  
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setFilteredItems(stockItems);
+    } else {
+      const lowercaseSearch = searchTerm.toLowerCase();
+      const filtered = stockItems.filter(item => 
+        item.name.toLowerCase().includes(lowercaseSearch) || 
+        (item.description && item.description.toLowerCase().includes(lowercaseSearch))
+      );
+      setFilteredItems(filtered);
+    }
+  }, [searchTerm, stockItems]);
   
   const handleAddItem = () => {
     setIsEditing(false);
@@ -443,7 +445,7 @@ const Stock: React.FC<StockProps> = ({ darkMode, showNotification }) => {
     });
     setShowAddEditModal(true);
   };
-
+  
   const handleEditItem = (item: StockItemData, event?: React.MouseEvent) => {
     if (event) event.stopPropagation();
     setIsEditing(true);
@@ -453,13 +455,13 @@ const Stock: React.FC<StockProps> = ({ darkMode, showNotification }) => {
     });
     setShowAddEditModal(true);
   };
-
+  
   const handleDeletePrompt = (item: StockItemData, event?: React.MouseEvent) => {
     if (event) event.stopPropagation();
     setCurrentItem(item);
     setShowDeleteModal(true);
   };
-
+  
   const handleDeleteConfirm = async () => {
     if (!currentItem) return;
     
@@ -490,7 +492,7 @@ const Stock: React.FC<StockProps> = ({ darkMode, showNotification }) => {
       setCurrentItem(null);
     }
   };
-
+  
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
@@ -507,7 +509,7 @@ const Stock: React.FC<StockProps> = ({ darkMode, showNotification }) => {
       });
     }
   };
-
+  
   const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -594,7 +596,7 @@ const Stock: React.FC<StockProps> = ({ darkMode, showNotification }) => {
       setCurrentItem(null);
     }
   };
-
+  
   return (
     <PageContainer>
       <PageHeader darkMode={darkMode}>

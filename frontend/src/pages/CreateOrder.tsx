@@ -725,18 +725,28 @@ const CreateOrder: React.FC<CreateOrderProps> = ({
   };
   
   const handleClearOrder = () => {
-    // If in create mode, just clear fields
-    setOrderDetails({
-      name: '',
-      description: '',
-      items: []
-    });
+    if (orderDetails.name || orderDetails.description || orderDetails.items.length > 0) {
+      if (window.confirm('האם אתה בטוח שברצונך לנקות את פרטי ההזמנה? כל הפריטים שהוספת יימחקו.')) {
+        setOrderDetails({
+          name: '',
+          description: '',
+          items: []
+        });
+        // Clear from localStorage
+        localStorage.removeItem('savedOrderDetails');
+        
+        showNotification({
+          message: 'פרטי ההזמנה נוקו בהצלחה',
+          type: 'success'
+        });
+      }
+    }
   };
   
   const handleCreateOrder = async () => {
     if (orderDetails.items.length === 0) {
       showNotification({
-        message: 'Cannot create empty order',
+        message: 'לא ניתן ליצור הזמנה ריקה',
         type: 'error'
       });
       return;
@@ -744,7 +754,7 @@ const CreateOrder: React.FC<CreateOrderProps> = ({
     
     if (!orderDetails.name.trim()) {
       showNotification({
-        message: 'Order must have a name',
+        message: 'נדרש שם להזמנה',
         type: 'error'
       });
       return;
@@ -759,7 +769,7 @@ const CreateOrder: React.FC<CreateOrderProps> = ({
       });
       
       showNotification({
-        message: 'Order created successfully',
+        message: 'ההזמנה נוצרה בהצלחה',
         type: 'success'
       });
       
@@ -777,7 +787,7 @@ const CreateOrder: React.FC<CreateOrderProps> = ({
     } catch (error) {
       console.error('Error creating order:', error);
       showNotification({
-        message: 'Failed to create order',
+        message: 'שגיאה ביצירת ההזמנה',
         type: 'error'
       });
     }
@@ -799,11 +809,11 @@ const CreateOrder: React.FC<CreateOrderProps> = ({
   return (
     <PageContainer darkMode={darkMode}>
       <PageHeader darkMode={darkMode}>
-        <h1>Create Order</h1>
+        <h1>יצירת הזמנה</h1>
         <ButtonsContainer>
           <SearchBox 
             type="text" 
-            placeholder="Search products..."
+            placeholder="חיפוש מוצרים..."
             value={searchTerm}
             onChange={handleSearch}
             darkMode={darkMode}
@@ -814,38 +824,38 @@ const CreateOrder: React.FC<CreateOrderProps> = ({
             darkMode={darkMode}
             variant="primary"
           >
-            Create Order
+            צור הזמנה
           </Button>
         </ButtonsContainer>
       </PageHeader>
       
       <OrderContent>
         <OrderPanel darkMode={darkMode}>
-          <SectionTitle darkMode={darkMode}>Order Details</SectionTitle>
+          <SectionTitle darkMode={darkMode}>פרטי הזמנה</SectionTitle>
           
           <FormField>
-            <Label darkMode={darkMode}>Order Name *</Label>
+            <Label darkMode={darkMode}>שם ההזמנה *</Label>
             <Input 
               type="text"
               value={orderDetails.name}
               onChange={handleOrderNameChange}
-              placeholder="Enter order name (required)"
+              placeholder="הזן שם הזמנה (חובה)"
               darkMode={darkMode}
               required
             />
           </FormField>
           
           <FormField>
-            <Label darkMode={darkMode}>Order Description</Label>
+            <Label darkMode={darkMode}>תיאור ההזמנה</Label>
             <TextArea 
               value={orderDetails.description}
               onChange={handleOrderDescriptionChange}
-              placeholder="Enter optional order description"
+              placeholder="הזן תיאור הזמנה (אופציונלי)"
               darkMode={darkMode}
             />
           </FormField>
           
-          <SectionTitle darkMode={darkMode}>Order Items</SectionTitle>
+          <SectionTitle darkMode={darkMode}>פריטי הזמנה</SectionTitle>
           
           {orderDetails.items.length > 0 ? (
             <>
@@ -876,7 +886,7 @@ const CreateOrder: React.FC<CreateOrderProps> = ({
                       <RemoveButton
                         darkMode={darkMode}
                         onClick={() => handleRemoveItem(index)}
-                        aria-label="Remove item"
+                        aria-label="הסר פריט"
                       >
                         <TrashIcon />
                       </RemoveButton>
@@ -886,7 +896,7 @@ const CreateOrder: React.FC<CreateOrderProps> = ({
               </OrderItemList>
               
               <OrderSummary darkMode={darkMode}>
-                <span>Total:</span>
+                <span>סה״כ:</span>
                 <strong>{formatPrice(calculateTotal())}</strong>
               </OrderSummary>
               
@@ -895,19 +905,19 @@ const CreateOrder: React.FC<CreateOrderProps> = ({
                 darkMode={darkMode}
                 variant="secondary"
               >
-                <TrashIcon /> Clear Order
+                <TrashIcon /> נקה הזמנה
               </Button>
             </>
           ) : (
             <EmptyMessage darkMode={darkMode}>
-              No items added to this order yet.<br/>
-              Browse products and click to add them.
+              אין פריטים בהזמנה זו עדיין.<br/>
+              סייר במוצרים ולחץ להוספה.
             </EmptyMessage>
           )}
         </OrderPanel>
         
         <ProductsPanel darkMode={darkMode}>
-          <SectionTitle darkMode={darkMode}>Available Products</SectionTitle>
+          <SectionTitle darkMode={darkMode}>מוצרים זמינים</SectionTitle>
           
           {filteredProducts.length > 0 ? (
             <ProductsList>
@@ -934,9 +944,15 @@ const CreateOrder: React.FC<CreateOrderProps> = ({
                       <ProductPrice darkMode={darkMode}>{formatPrice(product.price)}</ProductPrice>
                       <ProductStatus 
                         darkMode={darkMode} 
-                        status={product.status || 'In Stock'}
+                        status={product.status === 'In Stock' ? 'במלאי' : 
+                         product.status === 'Low Stock' ? 'מלאי נמוך' : 
+                         product.status === 'Out of Stock' ? 'אזל מהמלאי' : 
+                         product.status || 'במלאי'}
                       >
-                        {product.status || 'In Stock'}
+                        {product.status === 'In Stock' ? 'במלאי' : 
+                         product.status === 'Low Stock' ? 'מלאי נמוך' : 
+                         product.status === 'Out of Stock' ? 'אזל מהמלאי' : 
+                         product.status || 'במלאי'}
                       </ProductStatus>
                     </ProductInfo>
                     
@@ -949,7 +965,7 @@ const CreateOrder: React.FC<CreateOrderProps> = ({
             </ProductsList>
           ) : (
             <EmptyMessage darkMode={darkMode}>
-              No products found matching your search.
+              לא נמצאו מוצרים התואמים את החיפוש שלך.
             </EmptyMessage>
           )}
         </ProductsPanel>

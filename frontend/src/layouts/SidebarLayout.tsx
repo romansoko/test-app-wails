@@ -618,7 +618,7 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({
           darkMode={darkMode} 
           collapsed={collapsed}
           onClick={() => setCollapsed(!collapsed)}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-label={collapsed ? "הרחב תפריט" : "צמצם תפריט"}
         >
           <ChevronRightIcon />
         </CollapseButton>
@@ -629,13 +629,13 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({
               <GardenLogo className="logo" />
             </LogoIconWrapper>
             <AppTitle collapsed={collapsed} darkMode={darkMode}>
-              Garden Manager
+              מנהל גינה
             </AppTitle>
           </LogoContainer>
         </SidebarHeader>
         
         <NavMenuContainer>
-          <SectionTitle darkMode={darkMode} collapsed={collapsed}>Main Navigation</SectionTitle>
+          <SectionTitle darkMode={darkMode} collapsed={collapsed}>תפריט ראשי</SectionTitle>
           <NavMenu collapsed={collapsed}>
             <NavItem 
               active={activePage === "dashboard"} 
@@ -644,7 +644,7 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({
               onClick={() => setActivePage("dashboard")}
             >
               <span className="icon"><DashboardIcon /></span>
-              <span className="label">Dashboard</span>
+              <span className="label">לוח בקרה</span>
             </NavItem>
             <NavItem 
               active={activePage === "products"} 
@@ -653,7 +653,7 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({
               onClick={() => setActivePage("products")}
             >
               <span className="icon"><ProductsIcon /></span>
-              <span className="label">Products</span>
+              <span className="label">מוצרים</span>
             </NavItem>
             <NavItem 
               active={activePage === "create-order"} 
@@ -662,7 +662,7 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({
               onClick={() => setActivePage("create-order")}
             >
               <span className="icon"><CreateOrderIcon /></span>
-              <span className="label">Create Order</span>
+              <span className="label">צור הזמנה</span>
             </NavItem>
             <NavItem 
               active={activePage === "orders"} 
@@ -671,7 +671,7 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({
               onClick={() => setActivePage("orders")}
             >
               <span className="icon"><OrdersIcon /></span>
-              <span className="label">Orders</span>
+              <span className="label">הזמנות</span>
             </NavItem>
             <NavItem 
               active={activePage === "stock"}
@@ -680,26 +680,31 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({
               onClick={() => setActivePage("stock")}
             >
               <span className="icon">{renderIcon(FaBoxes)}</span>
-              <span className="label">Stock</span>
+              <span className="label">מלאי</span>
             </NavItem>
           </NavMenu>
         </NavMenuContainer>
         
         <SidebarFooter darkMode={darkMode} collapsed={collapsed}>
-          © 2025 Garden Product Manager
+          © 2025 מנהל מוצרי גינה
         </SidebarFooter>
       </Sidebar>
       
       <MainContent>
         <Header darkMode={darkMode}>
           <PageTitle darkMode={darkMode}>
-            {activePage.charAt(0).toUpperCase() + activePage.slice(1).replace('-', ' ')}
+            {activePage === "dashboard" ? "לוח בקרה" : 
+             activePage === "products" ? "מוצרים" :
+             activePage === "create-order" ? "צור הזמנה" :
+             activePage === "orders" ? "הזמנות" :
+             activePage === "stock" ? "מלאי" :
+             activePage.charAt(0).toUpperCase() + activePage.slice(1).replace('-', ' ')}
           </PageTitle>
           
           <HeaderRight>
             <StatusIndicator isError={dbStatus.includes('error')} darkMode={darkMode}>
               <div className="dot"></div>
-              <span>{dbStatus.includes('error') ? 'Database Error' : 'Connected'}</span>
+              <span>{dbStatus.includes('error') ? 'שגיאת מסד נתונים' : 'מחובר'}</span>
             </StatusIndicator>
             
             <TimeDisplay darkMode={darkMode}>
@@ -710,8 +715,8 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({
             <ThemeToggle 
               darkMode={darkMode}
               onClick={toggleDarkMode} 
-              aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-              title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+              aria-label={darkMode ? 'עבור למצב בהיר' : 'עבור למצב כהה'}
+              title={darkMode ? 'עבור למצב בהיר' : 'עבור למצב כהה'}
             >
               {darkMode ? <SunIcon /> : <MoonIcon />}
             </ThemeToggle>

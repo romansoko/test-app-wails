@@ -340,21 +340,21 @@ const Products: React.FC<ProductsProps> = ({
       
       if (success) {
         showNotification({
-          message: `${productToDelete.name} deleted successfully`,
+          message: `${productToDelete.name} נמחק בהצלחה`,
           type: 'success'
         });
         onProductsChanged();
       } else {
         console.error('Delete product returned false');
         showNotification({
-          message: `Failed to delete ${productToDelete.name}`,
+          message: `נכשל במחיקת ${productToDelete.name}`,
           type: 'error'
         });
       }
     } catch (error) {
       console.error('Error deleting product:', error);
       showNotification({
-        message: `Error deleting product: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        message: `שגיאה במחיקת מוצר: ${error instanceof Error ? error.message : 'שגיאה לא ידועה'}`,
         type: 'error'
       });
     } finally {
@@ -381,8 +381,8 @@ const Products: React.FC<ProductsProps> = ({
       if (success) {
         showNotification({
           message: isEditing 
-            ? 'Product updated successfully' 
-            : 'Product added successfully', 
+            ? 'המוצר עודכן בהצלחה' 
+            : 'המוצר נוסף בהצלחה', 
           type: 'success'
         });
         setIsAdding(false);
@@ -391,15 +391,15 @@ const Products: React.FC<ProductsProps> = ({
       } else {
         showNotification({
           message: isEditing 
-            ? 'Failed to update product' 
-            : 'Failed to add product', 
+            ? 'נכשל בעדכון המוצר' 
+            : 'נכשל בהוספת המוצר', 
           type: 'error'
         });
       }
     } catch (error) {
       console.error('Error saving product:', error);
       showNotification({
-        message: 'Error saving product',
+        message: 'שגיאה בשמירת המוצר',
         type: 'error'
       });
     }
@@ -416,13 +416,13 @@ const Products: React.FC<ProductsProps> = ({
       await UpdateProduct(updatedProduct);
       onProductsChanged();
       showNotification({
-        message: `Product status updated to ${newStatus}`,
+        message: `סטטוס המוצר עודכן ל-${newStatus}`,
         type: 'success'
       });
     } catch (error) {
       console.error('Error updating product status:', error);
       showNotification({
-        message: 'Failed to update product status',
+        message: 'שגיאה בעדכון סטטוס המוצר',
         type: 'error'
       });
     }
@@ -433,7 +433,7 @@ const Products: React.FC<ProductsProps> = ({
       <ProductsHeader>
         <SearchBox 
           darkMode={darkMode}
-          placeholder="Search by name or description..."
+          placeholder="חיפוש לפי שם או תיאור..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -442,7 +442,7 @@ const Products: React.FC<ProductsProps> = ({
           darkMode={darkMode}
           onClick={handleAddProduct}
         >
-          <span>+</span> Add New Product
+          <span>+</span> הוסף מוצר חדש
         </AddButton>
       </ProductsHeader>
       
@@ -463,7 +463,7 @@ const Products: React.FC<ProductsProps> = ({
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
               </svg>
-              <p>No products found</p>
+              <p>אין מוצרים</p>
             </NoProductsMessage>
           ) : (
             filteredProducts.map(product => (
@@ -478,9 +478,9 @@ const Products: React.FC<ProductsProps> = ({
                     value={product.status || 'In Stock'}
                     onChange={(e) => handleStatusChange(product, e.target.value)}
                   >
-                    <option value="In Stock">In Stock</option>
-                    <option value="Low Stock">Low Stock</option>
-                    <option value="Out of Stock">Out of Stock</option>
+                    <option value="In Stock">במלאי</option>
+                    <option value="Low Stock">מלאי נמוך</option>
+                    <option value="Out of Stock">אזל</option>
                   </StockDropdown>
                 </ProductContent>
                 
@@ -489,7 +489,7 @@ const Products: React.FC<ProductsProps> = ({
                     className="edit"
                     darkMode={darkMode}
                     onClick={() => handleEditProduct(product)}
-                    aria-label="Edit product"
+                    aria-label="ערוך מוצר"
                   >
                     ✏️
                   </ActionButton>
@@ -498,7 +498,7 @@ const Products: React.FC<ProductsProps> = ({
                     className="delete"
                     darkMode={darkMode}
                     onClick={() => handleDeleteClick(product)}
-                    aria-label="Delete product"
+                    aria-label="מחק מוצר"
                   >
                     🗑️
                   </ActionButton>
@@ -511,10 +511,10 @@ const Products: React.FC<ProductsProps> = ({
       
       <ConfirmDialog
         isOpen={isConfirmDialogOpen}
-        title="Confirm Deletion"
-        message={`Are you sure you want to delete "${productToDelete?.name}"? This action cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
+        title="אישור מחיקה"
+        message={`האם אתה בטוח שברצונך למחוק את "${productToDelete?.name}"? פעולה זו אינה ניתנת לביטול.`}
+        confirmText="מחק"
+        cancelText="ביטול"
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
         darkMode={darkMode}

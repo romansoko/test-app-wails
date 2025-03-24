@@ -642,7 +642,7 @@ const Orders: React.FC<OrdersProps> = ({ darkMode, showNotification }) => {
       const orderData: OrderData[] = Array.isArray(data) ? data.map(order => ({
         id: order.id,
         date: order.date,
-        name: order.name || `Order #${order.id}`, // Fallback for old orders
+        name: order.name || `הזמנה #${order.id}`, // Fallback for old orders
         description: order.description || '',
         status: order.status,
         items: order.items || [],
@@ -653,7 +653,7 @@ const Orders: React.FC<OrdersProps> = ({ darkMode, showNotification }) => {
     } catch (error) {
       console.error('Error loading orders:', error);
       showNotification({
-        message: 'Failed to load orders',
+        message: 'שגיאה בטעינת ההזמנות',
         type: 'error'
       });
       setLoading(false);
@@ -673,7 +673,7 @@ const Orders: React.FC<OrdersProps> = ({ darkMode, showNotification }) => {
     try {
       // Show loading indicator if needed
       showNotification({
-        message: 'Updating order status...',
+        message: 'מעדכן סטטוס הזמנה...',
         type: 'info'
       });
       
@@ -691,13 +691,13 @@ const Orders: React.FC<OrdersProps> = ({ darkMode, showNotification }) => {
       }
       
       showNotification({
-        message: 'Order status updated successfully',
+        message: 'סטטוס ההזמנה עודכן בהצלחה',
         type: 'success'
       });
     } catch (error) {
       console.error('Error updating order status:', error);
       showNotification({
-        message: 'Failed to update order status',
+        message: 'שגיאה בעדכון סטטוס ההזמנה',
         type: 'error'
       });
     }
@@ -717,13 +717,13 @@ const Orders: React.FC<OrdersProps> = ({ darkMode, showNotification }) => {
       }
       
       showNotification({
-        message: 'Order deleted successfully',
+        message: 'ההזמנה נמחקה בהצלחה',
         type: 'success'
       });
     } catch (error) {
       console.error('Error deleting order:', error);
       showNotification({
-        message: 'Failed to delete order',
+        message: 'שגיאה במחיקת ההזמנה',
         type: 'error'
       });
     }
@@ -782,16 +782,16 @@ const Orders: React.FC<OrdersProps> = ({ darkMode, showNotification }) => {
   return (
     <PageContainer darkMode={darkMode}>
       <PageHeader darkMode={darkMode}>
-        <h1>Orders</h1>
+        <h1>הזמנות</h1>
       </PageHeader>
       
       <OrdersPanel darkMode={darkMode}>
-        <SectionTitle darkMode={darkMode}>Order List</SectionTitle>
+        <SectionTitle darkMode={darkMode}>רשימת הזמנות</SectionTitle>
         
         <FilterContainer>
           <SearchBox 
             type="text"
-            placeholder="Search by order name or ID..."
+            placeholder="חפש לפי שם הזמנה או מזהה..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             darkMode={darkMode}
@@ -809,17 +809,17 @@ const Orders: React.FC<OrdersProps> = ({ darkMode, showNotification }) => {
             onChange={(e) => setStatusFilter(e.target.value)}
             darkMode={darkMode}
           >
-            <option value="All">All Statuses</option>
-            <option value="Pending">Pending</option>
-            <option value="Processing">Processing</option>
-            <option value="Shipped">Shipped</option>
-            <option value="Delivered">Delivered</option>
-            <option value="Cancelled">Cancelled</option>
+            <option value="All">כל הסטטוסים</option>
+            <option value="Pending">ממתין</option>
+            <option value="Processing">בטיפול</option>
+            <option value="Shipped">נשלח</option>
+            <option value="Delivered">נמסר</option>
+            <option value="Cancelled">בוטל</option>
           </StatusFilter>
         </FilterContainer>
         
         {loading ? (
-          <EmptyMessage darkMode={darkMode}>Loading orders...</EmptyMessage>
+          <EmptyMessage darkMode={darkMode}>טוען הזמנות...</EmptyMessage>
         ) : filteredOrders.length > 0 ? (
           <OrderCardGrid>
             {filteredOrders.map(order => (
@@ -838,13 +838,17 @@ const Orders: React.FC<OrdersProps> = ({ darkMode, showNotification }) => {
                     <OrderDate darkMode={darkMode}>{formatDate(order.date)}</OrderDate>
                   </div>
                   <StatusBadge status={order.status} darkMode={darkMode}>
-                    {order.status}
+                    {order.status === 'Pending' ? 'ממתין' :
+                     order.status === 'Processing' ? 'בטיפול' :
+                     order.status === 'Shipped' ? 'נשלח' :
+                     order.status === 'Delivered' ? 'נמסר' :
+                     order.status === 'Cancelled' ? 'בוטל' : order.status}
                   </StatusBadge>
                 </OrderCardHeader>
                 
                 <div>
                   <div style={{ fontSize: '0.85rem', color: darkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)' }}>
-                    {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
+                    {order.items.length} {order.items.length === 1 ? 'פריט' : 'פריטים'}
                   </div>
                 </div>
                 
@@ -855,7 +859,7 @@ const Orders: React.FC<OrdersProps> = ({ darkMode, showNotification }) => {
                       darkMode={darkMode} 
                       variant="danger"
                       onClick={(e) => handleConfirmDelete(order.id, e)}
-                      aria-label="Delete order"
+                      aria-label="מחק הזמנה"
                     >
                       <TrashIcon />
                     </ActionIconButton>
@@ -867,7 +871,7 @@ const Orders: React.FC<OrdersProps> = ({ darkMode, showNotification }) => {
                         e.stopPropagation();
                         handleViewOrder(order);
                       }}
-                      aria-label="View order details"
+                      aria-label="הצג פרטי הזמנה"
                     >
                       <EyeIcon />
                     </ActionIconButton>
@@ -878,44 +882,44 @@ const Orders: React.FC<OrdersProps> = ({ darkMode, showNotification }) => {
           </OrderCardGrid>
         ) : (
           <EmptyMessage darkMode={darkMode}>
-            No orders found matching your search criteria.
+            לא נמצאו הזמנות התואמות את החיפוש שלך.
           </EmptyMessage>
         )}
       </OrdersPanel>
       
       {selectedOrder && (
         <OrderDetailsPanel darkMode={darkMode}>
-          <SectionTitle darkMode={darkMode}>Order Details</SectionTitle>
+          <SectionTitle darkMode={darkMode}>פרטי הזמנה</SectionTitle>
           
           <OrderMeta>
             <OrderMetaItem darkMode={darkMode}>
-              <div className="label">Order Name</div>
+              <div className="label">שם הזמנה</div>
               <div className="value">{selectedOrder.name}</div>
             </OrderMetaItem>
             
             <OrderMetaItem darkMode={darkMode}>
-              <div className="label">Order ID</div>
+              <div className="label">מזהה הזמנה</div>
               <div className="value">#{selectedOrder.id}</div>
             </OrderMetaItem>
             
             <OrderMetaItem darkMode={darkMode}>
-              <div className="label">Created At</div>
+              <div className="label">נוצר בתאריך</div>
               <div className="value">{formatDate(selectedOrder.date)}</div>
             </OrderMetaItem>
             
             <OrderMetaItem darkMode={darkMode}>
-              <div className="label">Status</div>
+              <div className="label">סטטוס</div>
               <div className="value">
                 <StatusSelector
                   value={selectedOrder.status}
                   onChange={(e) => handleStatusChange(selectedOrder.id, e.target.value)}
                   darkMode={darkMode}
                 >
-                  <option value="Pending">Pending</option>
-                  <option value="Processing">Processing</option>
-                  <option value="Shipped">Shipped</option>
-                  <option value="Delivered">Delivered</option>
-                  <option value="Cancelled">Cancelled</option>
+                  <option value="Pending">ממתין</option>
+                  <option value="Processing">בטיפול</option>
+                  <option value="Shipped">נשלח</option>
+                  <option value="Delivered">נמסר</option>
+                  <option value="Cancelled">בוטל</option>
                 </StatusSelector>
               </div>
             </OrderMetaItem>
@@ -923,7 +927,7 @@ const Orders: React.FC<OrdersProps> = ({ darkMode, showNotification }) => {
           
           {selectedOrder.description && (
             <OrderMetaItem darkMode={darkMode} style={{ marginBottom: '20px' }}>
-              <div className="label">Description</div>
+              <div className="label">תיאור</div>
               <div className="value" style={{ whiteSpace: 'pre-wrap' }}>{selectedOrder.description}</div>
             </OrderMetaItem>
           )}
@@ -935,10 +939,10 @@ const Orders: React.FC<OrdersProps> = ({ darkMode, showNotification }) => {
                   <ItemDetails>
                     <ItemRow>
                       <ItemName darkMode={darkMode}>{item.productName}</ItemName>
-                      <ItemPrice darkMode={darkMode}>{formatPrice(item.price)} each</ItemPrice>
+                      <ItemPrice darkMode={darkMode}>{formatPrice(item.price)} לפריט</ItemPrice>
                     </ItemRow>
                     <ItemRow>
-                      <ItemQuantity darkMode={darkMode}>Quantity: {item.quantity}</ItemQuantity>
+                      <ItemQuantity darkMode={darkMode}>כמות: {item.quantity}</ItemQuantity>
                       <ItemSubtotal darkMode={darkMode}>{formatPrice(item.price * item.quantity)}</ItemSubtotal>
                     </ItemRow>
                   </ItemDetails>
@@ -946,11 +950,11 @@ const Orders: React.FC<OrdersProps> = ({ darkMode, showNotification }) => {
               ))}
             </OrderItemList>
           ) : (
-            <EmptyMessage darkMode={darkMode}>No items in this order</EmptyMessage>
+            <EmptyMessage darkMode={darkMode}>אין פריטים בהזמנה זו</EmptyMessage>
           )}
           
           <OrderTotal darkMode={darkMode}>
-            <span>Total:</span>
+            <span>סה״כ:</span>
             <strong>{formatPrice(calculateTotal(orderItems))}</strong>
           </OrderTotal>
         </OrderDetailsPanel>
@@ -982,13 +986,13 @@ const Orders: React.FC<OrdersProps> = ({ darkMode, showNotification }) => {
               margin: '0 0 16px 0',
               color: darkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)'
             }}>
-              Confirm Delete
+              אישור מחיקה
             </h3>
             <p style={{ 
               margin: '0 0 20px 0',
               color: darkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'
             }}>
-              Are you sure you want to delete this order? This action cannot be undone.
+              האם אתה בטוח שברצונך למחוק הזמנה זו? פעולה זו אינה ניתנת לביטול.
             </p>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
               <Button 
@@ -996,7 +1000,7 @@ const Orders: React.FC<OrdersProps> = ({ darkMode, showNotification }) => {
                 darkMode={darkMode}
                 variant="secondary"
               >
-                Cancel
+                ביטול
               </Button>
               <Button 
                 onClick={confirmDelete} 
@@ -1005,7 +1009,7 @@ const Orders: React.FC<OrdersProps> = ({ darkMode, showNotification }) => {
                 style={{ backgroundColor: darkMode ? 'rgba(220, 38, 38, 0.2)' : 'rgba(220, 38, 38, 0.1)', 
                         color: darkMode ? 'rgba(220, 38, 38, 0.9)' : 'rgba(220, 38, 38, 0.8)' }}
               >
-                Delete
+                מחק
               </Button>
             </div>
           </div>
