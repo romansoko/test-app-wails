@@ -361,7 +361,7 @@ func (db *Database) GetOrders() ([]Order, error) {
 
 		// Get items for this order
 		itemRows, err := db.db.Query(
-			"SELECT product_id, product_name, price, quantity FROM order_items WHERE order_id = ?",
+			"SELECT product_id, name, price, quantity FROM order_items WHERE order_id = ?",
 			order.ID,
 		)
 		if err != nil {
@@ -422,31 +422,45 @@ func (db *Database) CreateOrder(name string, description string, items []OrderIt
 	orderID := strconv.Itoa(maxID + 1)
 	date := fmt.Sprintf("%s", strings.Replace(strings.Split(fmt.Sprint(GetFormattedDate()), "+")[0], "T", " ", -1))
 
+	fmt.Printf("Creating order: ID=%s, Name=%s, Total=%.2f\n", orderID, name, total)
+
 	// Create the order
 	_, err = tx.Exec(
 		"INSERT INTO orders (id, date, name, description, total, status) VALUES (?, ?, ?, ?, ?, ?)",
 		orderID, date, name, description, total, "Pending",
 	)
 	if err != nil {
+		fmt.Printf("Error inserting order: %v\n", err)
 		return "", fmt.Errorf("failed to insert order: %v", err)
 	}
+	fmt.Printf("Order record created successfully\n")
 
 	// Insert the order items
-	for _, item := range items {
+	for i, item := range items {
+		// Generate a unique ID for each order item
+		itemID := uuid.New().String()
+
+		fmt.Printf("Inserting order item %d: ID=%s, ProductID=%s, Name=%s, Price=%.2f, Quantity=%d\n",
+			i+1, itemID, item.ProductID, item.ProductName, item.Price, item.Quantity)
+
 		_, err = tx.Exec(
-			"INSERT INTO order_items (order_id, product_id, product_name, price, quantity) VALUES (?, ?, ?, ?, ?)",
-			orderID, item.ProductID, item.ProductName, item.Price, item.Quantity,
+			"INSERT INTO order_items (id, order_id, product_id, name, price, quantity) VALUES (?, ?, ?, ?, ?, ?)",
+			itemID, orderID, item.ProductID, item.ProductName, item.Price, item.Quantity,
 		)
 		if err != nil {
+			fmt.Printf("Error inserting order item: %v\n", err)
 			return "", fmt.Errorf("failed to insert order item: %v", err)
 		}
 	}
+	fmt.Printf("All order items inserted successfully\n")
 
 	// Commit the transaction
 	if err = tx.Commit(); err != nil {
+		fmt.Printf("Error committing transaction: %v\n", err)
 		return "", fmt.Errorf("failed to commit transaction: %v", err)
 	}
 
+	fmt.Printf("Order %s created successfully with %d items\n", orderID, len(items))
 	return orderID, nil
 }
 

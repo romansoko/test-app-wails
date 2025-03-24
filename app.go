@@ -80,6 +80,8 @@ func (a *App) shutdown(ctx context.Context) {
 
 // GetCurrentTime returns the current time
 func (a *App) GetCurrentTime() string {
+	// Return the time directly without logging - this function gets called frequently
+	// and generates a lot of log entries
 	return time.Now().Format(time.RFC1123)
 }
 
@@ -182,11 +184,15 @@ func (a *App) CreateOrder(order struct {
 		return false
 	}
 
-	_, err := a.db.CreateOrder(order.Name, order.Description, order.Items)
+	log.Printf("Creating order with name: %s, description: %s, items count: %d", order.Name, order.Description, len(order.Items))
+
+	orderID, err := a.db.CreateOrder(order.Name, order.Description, order.Items)
 	if err != nil {
 		log.Printf("Error creating order: %v", err)
 		return false
 	}
+
+	log.Printf("Order created successfully with ID: %s", orderID)
 	return true
 }
 
