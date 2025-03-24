@@ -27,6 +27,7 @@ const pulse = keyframes`
 
 const LayoutContainer = styled.div<{ darkMode: boolean }>`
   display: flex;
+  flex-direction: row-reverse;
   height: 100vh;
   background-color: ${props => props.darkMode ? '#0f172a' : '#f8fafc'};
   color: ${props => props.darkMode ? '#e2e8f0' : '#1e293b'};
@@ -52,7 +53,7 @@ const Sidebar = styled.div<{ darkMode: boolean, collapsed: boolean }>`
     ? 'linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(18, 24, 38, 0.95) 100%)'
     : 'linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(248, 250, 252, 0.95) 100%)'};
   backdrop-filter: blur(12px);
-  border-right: 1px solid ${props => props.darkMode 
+  border-left: 1px solid ${props => props.darkMode 
     ? 'rgba(255, 255, 255, 0.05)' 
     : 'rgba(0, 0, 0, 0.03)'};
   display: flex;
@@ -60,8 +61,8 @@ const Sidebar = styled.div<{ darkMode: boolean, collapsed: boolean }>`
   position: relative;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: ${props => props.darkMode 
-    ? '0 10px 30px -10px rgba(0, 0, 0, 0.3)' 
-    : '0 10px 30px -10px rgba(0, 0, 0, 0.1)'};
+    ? '-10px 0 30px -10px rgba(0, 0, 0, 0.3)' 
+    : '-10px 0 30px -10px rgba(0, 0, 0, 0.1)'};
   overflow: hidden;
   z-index: 100;
   
@@ -84,7 +85,7 @@ const Sidebar = styled.div<{ darkMode: boolean, collapsed: boolean }>`
 const CollapseButton = styled.button<{ darkMode: boolean, collapsed: boolean }>`
   position: absolute;
   top: 25px;
-  right: ${props => props.collapsed ? "-12px" : "-12px"};
+  left: ${props => props.collapsed ? "-12px" : "-12px"};
   width: 24px;
   height: 24px;
   border-radius: 50%;
@@ -109,7 +110,7 @@ const CollapseButton = styled.button<{ darkMode: boolean, collapsed: boolean }>`
   svg {
     width: 14px;
     height: 14px;
-    transform: ${props => props.collapsed ? 'rotate(0deg)' : 'rotate(180deg)'};
+    transform: ${props => props.collapsed ? 'rotate(180deg)' : 'rotate(0deg)'};
     transition: transform 0.3s ease;
   }
 `;
@@ -223,22 +224,22 @@ const NavMenu = styled.nav<{ collapsed: boolean }>`
 const NavItem = styled.button<{ active: boolean, darkMode: boolean, collapsed: boolean }>`
   display: flex;
   align-items: center;
+  justify-content: ${props => props.collapsed ? 'center' : 'flex-end'};
   width: 100%;
   padding: ${props => props.collapsed ? '12px 0' : '12px 16px'};
   margin: ${props => props.collapsed ? '3px 0' : '3px 0'};
   background: ${props => props.active 
     ? props.darkMode 
-      ? 'linear-gradient(90deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05))' 
-      : 'linear-gradient(90deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05))'
+      ? 'linear-gradient(270deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05))' 
+      : 'linear-gradient(270deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05))'
     : 'transparent'};
   border: none;
   border-radius: ${props => props.collapsed ? '0' : '10px'};
-  text-align: left;
+  text-align: right;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  justify-content: ${props => props.collapsed ? 'center' : 'flex-start'};
   position: relative;
   overflow: hidden;
   
@@ -254,7 +255,7 @@ const NavItem = styled.button<{ active: boolean, darkMode: boolean, collapsed: b
     &::before {
       content: '';
       position: absolute;
-      left: ${props.collapsed ? '0' : '6px'};
+      right: ${props.collapsed ? '0' : '6px'};
       top: 50%;
       transform: translateY(-50%);
       width: 3px;
@@ -277,24 +278,24 @@ const NavItem = styled.button<{ active: boolean, darkMode: boolean, collapsed: b
     content: '';
     position: absolute;
     top: 0;
-    left: -100%;
+    right: -100%;
     width: 100%;
     height: 100%;
     background: linear-gradient(
-      90deg,
+      270deg,
       transparent,
       ${props => props.darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.8)'},
       transparent
     );
-    transition: left 0.7s ease;
+    transition: right 0.7s ease;
   }
   
   &:hover::after {
-    left: 100%;
+    right: 100%;
   }
   
   .icon {
-    margin-right: ${props => props.collapsed ? '0' : '14px'};
+    margin-left: ${props => props.collapsed ? '0' : '14px'};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -320,7 +321,7 @@ const NavItem = styled.button<{ active: boolean, darkMode: boolean, collapsed: b
   
   &:hover .icon svg {
     color: ${props => props.darkMode ? '#4ade80' : '#16a34a'};
-    transform: ${props => props.collapsed ? 'scale(1.1)' : 'translateX(2px)'};
+    transform: ${props => props.collapsed ? 'scale(1.1)' : 'translateX(-2px)'};
   }
   
   .label {
@@ -381,13 +382,13 @@ const PageTitle = styled.h2<{ darkMode: boolean }>`
   &::after {
     content: '';
     position: absolute;
-    left: 0;
+    right: 0;
     bottom: -3px;
     width: 40px;
     height: 3px;
     background: ${props => props.darkMode 
-      ? 'linear-gradient(to right, #4ade80, rgba(74, 222, 128, 0.3))' 
-      : 'linear-gradient(to right, #16a34a, rgba(22, 163, 74, 0.3))'};
+      ? 'linear-gradient(to left, #4ade80, rgba(74, 222, 128, 0.3))' 
+      : 'linear-gradient(to left, #16a34a, rgba(22, 163, 74, 0.3))'};
     border-radius: 3px;
   }
 `;
@@ -643,8 +644,8 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({
               collapsed={collapsed}
               onClick={() => setActivePage("dashboard")}
             >
-              <span className="icon"><DashboardIcon /></span>
               <span className="label">לוח בקרה</span>
+              <span className="icon"><DashboardIcon /></span>
             </NavItem>
             <NavItem 
               active={activePage === "products"} 
@@ -652,8 +653,8 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({
               collapsed={collapsed}
               onClick={() => setActivePage("products")}
             >
-              <span className="icon"><ProductsIcon /></span>
               <span className="label">מוצרים</span>
+              <span className="icon"><ProductsIcon /></span>
             </NavItem>
             <NavItem 
               active={activePage === "create-order"} 
@@ -661,8 +662,8 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({
               collapsed={collapsed}
               onClick={() => setActivePage("create-order")}
             >
-              <span className="icon"><CreateOrderIcon /></span>
               <span className="label">צור הזמנה</span>
+              <span className="icon"><CreateOrderIcon /></span>
             </NavItem>
             <NavItem 
               active={activePage === "orders"} 
@@ -670,8 +671,8 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({
               collapsed={collapsed}
               onClick={() => setActivePage("orders")}
             >
-              <span className="icon"><OrdersIcon /></span>
               <span className="label">הזמנות</span>
+              <span className="icon"><OrdersIcon /></span>
             </NavItem>
             <NavItem 
               active={activePage === "stock"}
@@ -679,8 +680,8 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({
               collapsed={collapsed}
               onClick={() => setActivePage("stock")}
             >
-              <span className="icon">{renderIcon(FaBoxes)}</span>
               <span className="label">מלאי</span>
+              <span className="icon">{renderIcon(FaBoxes)}</span>
             </NavItem>
           </NavMenu>
         </NavMenuContainer>
